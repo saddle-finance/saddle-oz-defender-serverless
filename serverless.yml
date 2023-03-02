@@ -18,38 +18,38 @@ provider:
   stackName: 'mystack'
   # SSOT: use this template as a single source of truth. 
   # This will delete Defender resources (with the exception of Relayers) not found in this template upon deployment.
-  ssot: false
+  ssot: true
 
 defender:
   key: "${env:TEAM_API_KEY}"
   secret: "${env:TEAM_API_SECRET}"
 
 functions:
-  autotask-example-1:
-    name: 'Hello world from serverless'
-    path: './autotasks/hello-world'
-    relayer: ${self:resources.Resources.relayers.relayer-1}
+  root-gauge-factory-automation:
+    name: 'Bridges root gauge factory transmit emission to side chains'
+    path: './autotasks/root-gauge-factory-automation'
+    relayer: ${self:resources.Resources.relayers.root-gauge-factory-automation-relayer}
     trigger:
       type: "schedule"
-      frequency: 1500
+      cron: "0 0 * * THU"
     paused: false
 
 resources:
   Resources:
     policies:
-      policy-1:
+      root-gauge-factory-automation-policy:
         gas-price-cap: 1000
         whitelist-receivers:
           - "0x0f06aB75c7DD497981b75CD82F6566e3a5CAd8f2"
         eip1559-pricing: true
-        private-transactions: true
+        private-transactions: false
 
     relayers:
-      relayer-1:
-        name: "My Relayer"
-        network: "goerli"
+      root-gauge-factory-automation-relayer:
+        name: "RootGaugeFactory automation relayer"
+        network: "mainnet"
         min-balance: 1000
-        policy: ${self:resources.Resources.policies.policy-1}
+        policy: ${self:resources.Resources.policies.root-gauge-factory-automation-policy}
         api-keys:
           - key1
 
