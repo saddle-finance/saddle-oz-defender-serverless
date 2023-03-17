@@ -27,7 +27,7 @@ defender:
 functions:
   root-gauge-factory-automation:
     name: 'Bridges root gauge factory transmit emission to side chains'
-    path: './autotasks/root-gauge-factory-automation'
+    path: './dist/root-gauge-factory-automation'
     relayer: ${self:resources.Resources.relayers.root-gauge-factory-automation-relayer}
     trigger:
       type: "schedule"
