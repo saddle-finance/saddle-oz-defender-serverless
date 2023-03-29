@@ -24,12 +24,19 @@ export async function ethersScript(provider: BaseProvider, signer: Signer) {
   console.log(`Associated relayer address is: ${await signer.getAddress()}`)
 
   const rootGauges : Contracts = await getContractsFromDeployment(parseInt(CHAIN_ID.MAINNET), "RootGauge_*", signer, provider)
-  const rootGaugeFactory : RootGaugeFactory = await ethers.getContractAt(
+  const rootGaugeFactory = (await ethers.getContractAt(
     "RootGaugeFactory",
     RootGaugeFactoryDeployment.address,
-  )
-  for (const rootGaugeName in rootGauges) {
-    const rootGauge = rootGauges[rootGaugeName];
-    await rootGaugeFactory.connect(signer).transmit_emissions(rootGauge.address);
+  )) as RootGaugeFactory;
+  for (const gaugeName in rootGauges) {
+    const gauge = rootGauges[gaugeName];
+    try {
+      await rootGaugeFactory.connect(signer).transmit_emissions(gauge.address);
+      console.log(`Successfully transmitted emissions for gauge ${gaugeName}`);
+    } catch (error) {
+      console.log(`Failed to transmit emissions for gauge ${gaugeName}`);
+      console.error(error);
+    }
   }
+  
 }
