@@ -1,7 +1,3 @@
-import dotenv from "dotenv"
-
-dotenv.config()
-
 // Record of chain name to chain id
 export const CHAIN_ID: Record<string, string> = {
   MAINNET: "1",
