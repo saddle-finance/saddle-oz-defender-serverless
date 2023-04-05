@@ -29,7 +29,7 @@ export async function getActiveRootGaugeAddresses(
   )
 
   // get all active gauges from gauge controller
-  let nGauges = await gaugeController.functions.n_gauges({blockTag:16985300});
+  let nGauges = await gaugeController.n_gauges();
   let gaugeAddresses = [];
   for (let i = 0; i < Number(nGauges); i++) {
     const gaugeAddress = await gaugeController.gauges(i);
