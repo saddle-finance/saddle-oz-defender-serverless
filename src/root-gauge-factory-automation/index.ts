@@ -72,20 +72,23 @@ async function getActiveRootGaugeAddresses(
       chainId
     );
     console.log(
-      `Found ${gaugeCount.toNumber()} root gauges for chain ${chainId}`
+      `Found ${gaugeCount.toNumber()} registered root gauges for chain ${chainId}`
     );
     for (let i = 0; i < gaugeCount.toNumber(); i++) {
       const gaugeAddress = (
         (await rootGaugeFactory.get_gauge(chainId, i)) as string
       ).toLowerCase();
-      if (
-        allActiveGaugeAddresses.has(gaugeAddress) &&
-        !rootGaugeAddresses.has(gaugeAddress)
-      ) {
-        rootGaugeAddresses.add(gaugeAddress);
-        console.log(
-          `${gaugeAddress} is an active root gauge for chain ${chainId}`
-        );
+      if (!rootGaugeAddresses.has(gaugeAddress)) {
+        if (allActiveGaugeAddresses.has(gaugeAddress)) {
+          rootGaugeAddresses.add(gaugeAddress);
+          console.log(
+            `${gaugeAddress} is a registered root gauge for chain ${chainId}`
+          );
+        } else {
+          console.log(
+            `${gaugeAddress} is is an UNREGISTERED root gauge for chain ${chainId}`
+          );
+        }
       }
     }
   }

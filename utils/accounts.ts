@@ -1,7 +1,7 @@
 // Saddle's Multisig address that owns various contracts
 // List of signers can be found here: https://docs.saddle.finance/faq#who-controls-saddles-admin-keys
 
-import { CHAIN_ID } from "./network"
+import { CHAIN_ID } from "./network";
 
 export const MULTISIG_ADDRESSES = {
   // Hardhat's default account
@@ -22,7 +22,7 @@ export const MULTISIG_ADDRESSES = {
   [CHAIN_ID.EVMOS_MAINNET]: "0x25e73a609751E3289EAE21A6Dae431ff1E6fE261",
   // https://app.safe.global/aurora:0x4e76a78Fd1Fb0811a0A9092275A32c04e346d000/home
   [CHAIN_ID.AURORA_MAINNET]: "0x4e76a78Fd1Fb0811a0A9092275A32c04e346d000",
-}
+};
 
 // 2/3 multisig for operational ownerships
 export const OPS_MULTISIG_ADDRESSES = {
@@ -34,16 +34,15 @@ export const OPS_MULTISIG_ADDRESSES = {
   [CHAIN_ID.FANTOM_MAINNET]: "0x4802CedbDF865382dbaED8D5e41a65C8AB840676",
   [CHAIN_ID.EVMOS_MAINNET]: "0x8A0BB6E3456008195219Bf71E1Bb6E37b909c153",
   [CHAIN_ID.AURORA_MAINNET]: "0xeae45E6958C2808a4C8b8bC2f3E8E99d2c65b734",
-}
-
+};
 
 export const PROD_DEPLOYER_ADDRESS =
-  "0x5BDb37d0Ddea3A90F233c7B7F6b9394B6b2eef34"
+  "0x5BDb37d0Ddea3A90F233c7B7F6b9394B6b2eef34";
 
 export const PROD_CROSS_CHAIN_DEPLOYER_ADDRESS =
-  "0x979B44CFc7a9B54BED8a3C4FD674B09c194219fD"
+  "0x979B44CFc7a9B54BED8a3C4FD674B09c194219fD";
 
-export const RELAYER_ADDRESS = "0x31efe0a112c82071b45863db293ea957fe008a13"
+export const RELAYER_ADDRESS = "0x31efe0a112c82071b45863db293ea957fe008a13";
 
 // https://docs.multichain.org/developer-guide/anycall/anycall-v6/how-to-integrate-anycall-v6
-export const ANYCALL_ADDRESS = "0xC10Ef9F491C9B59f936957026020C321651ac078"
+export const ANYCALL_ADDRESS = "0xC10Ef9F491C9B59f936957026020C321651ac078";
