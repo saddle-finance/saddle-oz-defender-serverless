@@ -3,11 +3,11 @@ import { BaseProvider } from '@ethersproject/providers';
 import { DefenderRelaySigner, DefenderRelayProvider} from 'defender-relay-client/lib/ethers';
 import { RelayerParams } from 'defender-relay-client/lib/relayer';
 import { Signer } from 'ethers';
-import RootGaugeFactoryDeployment from "../../saddle-contract/deployments/mainnet/RootGaugeFactory.json"
+import { ROOT_GAUGE_FACTORY_ADDRESS, GAUGE_CONTROLLER_ADDRESS } from "../../utils/accounts"
 import { RootGaugeFactory } from "../../saddle-contract/build/typechain"
-import { getContractsFromDeployment } from "../../utils/utils"
-import {Contracts} from "../../utils/utils"
+import { getActiveRootGaugeAddressesFromRGF } from "../../utils/utils"
 import { CHAIN_ID } from "../../utils/network";
+import { GaugeController } from "../../../saddle-contract/build/typechain";
 
 // Entrypoint for the autotask
 export async function handler(credentials: RelayerParams) {
@@ -23,18 +23,20 @@ export async function handler(credentials: RelayerParams) {
 export async function ethersScript(provider: BaseProvider, signer: Signer) {
   console.log(`Associated relayer address is: ${await signer.getAddress()}`)
 
-  const rootGauges : Contracts = await getContractsFromDeployment(parseInt(CHAIN_ID.MAINNET), "RootGauge_*", signer, provider)
   const rootGaugeFactory = (await ethers.getContractAt(
     "RootGaugeFactory",
-    RootGaugeFactoryDeployment.address,
+    ROOT_GAUGE_FACTORY_ADDRESS
   )) as RootGaugeFactory;
-  for (const gaugeName in rootGauges) {
-    const gauge = rootGauges[gaugeName];
+  const rootGaugeAddresses : string[] = await getActiveRootGaugeAddressesFromRGF(
+    [CHAIN_ID.ARBITRUM_MAINNET, CHAIN_ID.OPTIMISM_MAINNET]
+  );
+  
+  for (const gaugeAddress in rootGaugeAddresses) {
     try {
-      await rootGaugeFactory.connect(signer).transmit_emissions(gauge.address);
-      console.log(`Successfully transmitted emissions for gauge ${gaugeName}`);
+      await rootGaugeFactory.connect(signer).transmit_emissions(gaugeAddress);
+      console.log(`Successfully transmitted emissions for gauge ${gaugeAddress}`);
     } catch (error) {
-      console.log(`Failed to transmit emissions for gauge ${gaugeName}`);
+      console.log(`Failed to transmit emissions for gauge ${gaugeAddress}`);
       console.error(error);
     }
   }
