@@ -3,11 +3,11 @@ import { BaseProvider } from '@ethersproject/providers';
 import { DefenderRelaySigner, DefenderRelayProvider} from 'defender-relay-client/lib/ethers';
 import { RelayerParams } from 'defender-relay-client/lib/relayer';
 import { Signer } from 'ethers';
-import { ROOT_GAUGE_FACTORY_ADDRESS, GAUGE_CONTROLLER_ADDRESS } from "../../utils/accounts"
-import { RootGaugeFactory } from "../../saddle-contract/build/typechain"
-import { getActiveRootGaugeAddressesFromRGF } from "../../utils/utils"
+import { ROOT_GAUGE_FACTORY_ADDRESS } from "../../utils/accounts"
+import { getActiveRootGaugeAddresses } from "../../utils/utils"
 import { CHAIN_ID } from "../../utils/network";
-import { GaugeController } from "../../../saddle-contract/build/typechain";
+import { RootGaugeFactory } from "../../../saddle-contract/build/typechain/";
+import RootGaugeFactoryABI from "../../../saddle-contract/build/artifacts/contracts/xchainGauges/RootGaugeFactory.vy/RootGaugeFactory.json";
 
 // Entrypoint for the autotask
 export async function handler(credentials: RelayerParams) {
@@ -23,11 +23,13 @@ export async function handler(credentials: RelayerParams) {
 export async function ethersScript(provider: BaseProvider, signer: Signer) {
   console.log(`Associated relayer address is: ${await signer.getAddress()}`)
 
-  const rootGaugeFactory = (await ethers.getContractAt(
-    "RootGaugeFactory",
-    ROOT_GAUGE_FACTORY_ADDRESS
-  )) as RootGaugeFactory;
-  const rootGaugeAddresses : string[] = await getActiveRootGaugeAddressesFromRGF(
+  const rootGaugeFactory = new ethers.Contract(
+    ROOT_GAUGE_FACTORY_ADDRESS,
+    JSON.stringify(RootGaugeFactoryABI.abi),
+    signer
+  );
+  const rootGaugeAddresses = await getActiveRootGaugeAddresses(
+    signer,
     [CHAIN_ID.ARBITRUM_MAINNET, CHAIN_ID.OPTIMISM_MAINNET]
   );
   

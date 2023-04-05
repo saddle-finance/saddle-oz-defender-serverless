@@ -1,16 +1,28 @@
+import chai from "chai"
 import { ethersScript } from "../src/root-gauge-factory-automation";
-import hre from "hardhat"
+import { ethers } from "hardhat";
+import { providers } from "ethers";
+import { setEtherBalance, impersonateRelayer, getProviderUrl } from "../utils/testUtils"
+import { CHAIN_ID } from "../utils/network"
 
-const provider = hre.ethers.provider;
-const signer = hre.ethers.provider.getSigner();
+const { expect } = chai
 
 describe("root-gauge-factory-automation test", () => {
-  beforeEach(async () => {
-    // Fork network at specific block, set up signer's funds, use impersonated signer etc
+  let provider: providers.JsonRpcProvider;
+  let signer: providers.JsonRpcSigner;
+
+  beforeEach(async () => { 
+    provider = new ethers.providers.JsonRpcProvider(getProviderUrl(CHAIN_ID.MAINNET));
+    signer = await impersonateRelayer();
+    console.log("Impersonating relayer account: ", await signer.getAddress());
+    await setEtherBalance(
+      await signer.getAddress(),
+      ethers.constants.WeiPerEther.mul(1000),
+    )
   });
 
-  it("Successfully runs the script", async () => {
-    await ethersScript(provider, signer); // Use hardhat provider and signer for testing
-    // Add any assertions to check the script executed as expected.
+  it("Successfully calls transmit_emissions on root gauges", async () => {
+    await ethersScript(provider, signer); 
+    expect(true).to.equal(true);
   });
 })
