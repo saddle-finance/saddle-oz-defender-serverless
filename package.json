@@ -45,25 +45,6 @@
     "solidity-coverage": "^0.8.0",
     "ts-node": ">=8.0.0",
     "typechain": "^8.1.0",
-    "typescript": ">=4.5.0",
-    "@types/node-fetch": "^2.6.2",
-    "@typescript-eslint/eslint-plugin": "^5.13.0",
-    "@typescript-eslint/parser": "^5.13.0",
-    "eslint": "^8.6.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-json": "^3.0.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-unused-imports": "^2.0.0",
-    "ethlint": "^1.2.5",
-    "hardhat-deploy": "^0.11.22",
-    "hardhat-spdx-license-identifier": "^2.0.3",
-    "node-fetch": "^2.6.7",
-    "prettier": "^2.8.1",
-    "prettier-plugin-solidity": "^1.0.0-beta.11",
-    "shelljs": "^0.8.4",
-    "solhint": "^3.3.6",
-    "solhint-plugin-prettier": "0.0.5",
-    "solidity-docgen": "^0.5.13",
-    "ts-generator": "^0.1.1"
+    "typescript": ">=4.5.0"
   }
 }
