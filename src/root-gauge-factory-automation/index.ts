@@ -117,7 +117,7 @@ export async function ethersScript(provider: BaseProvider, signer: Signer) {
       successfulGaugeAddresses.push(gaugeAddress);
     } catch (error) {
       console.warn(
-        `Failed to transmit emissions for gauge ${gaugeAddress}. Most likely because there are no emissions to transmit.`
+        `Failed to transmit emissions for gauge ${gaugeAddress}`
       );
       console.error(error);
       failedGaugeAddresses.push(gaugeAddress);
@@ -128,7 +128,7 @@ export async function ethersScript(provider: BaseProvider, signer: Signer) {
   );
   console.log(successfulGaugeAddresses);
   console.log(
-    `Failed to transmit emissions for ${failedGaugeAddresses.length} gauges`
+    `Failed to transmit emissions for ${failedGaugeAddresses.length} gauges (most likely because there are no emissions to transmit)`
   );
   console.log(failedGaugeAddresses);
 }

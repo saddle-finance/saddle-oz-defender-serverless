@@ -70,3 +70,5 @@ jobs:
 
       - name: Test autotask entry points using Hardhat test runner
         run: yarn test
+        env:
+          ALCHEMY_API_KEY: ${{ env.ALCHEMY_API_KEY }}
