@@ -9,7 +9,9 @@
   "scripts": {
     "test": "hardhat test",
     "build": "tsc",
-    "deploy": "npm run build && sls deploy"
+    "deploy": "npm run build && sls deploy",
+    "lint": "eslint . --ext .ts --no-eslintrc --config .eslintrc src test utils ",
+    "lint:fix": "eslint . --ext .ts --no-eslintrc --config .eslintrc --fix src test utils "
   },
   "contributors": [
     {
@@ -35,9 +37,12 @@
     "@types/chai": "^4.2.0",
     "@types/mocha": ">=9.1.0",
     "@types/node": ">=12.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "@typescript-eslint/parser": "^5.57.1",
     "chai": "^4.2.0",
     "defender-serverless": "^1.0.4",
     "dotenv": "^16.0.3",
+    "eslint": "^8.37.0",
     "ethers": "^5.4.7",
     "hardhat": "^2.13.0",
     "hardhat-gas-reporter": "^1.0.8",
@@ -45,6 +50,6 @@
     "solidity-coverage": "^0.8.0",
     "ts-node": ">=8.0.0",
     "typechain": "^8.1.0",
-    "typescript": ">=4.5.0"
+    "typescript": "^5.0.3"
   }
 }

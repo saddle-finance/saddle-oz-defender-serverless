@@ -54,8 +54,8 @@ async function getActiveRootGaugeAddresses(
   );
 
   // get all active gauges from gauge controller
-  let nGauges = await gaugeController.n_gauges();
-  let allActiveGaugeAddresses: Set<string> = new Set();
+  const nGauges = await gaugeController.n_gauges();
+  const allActiveGaugeAddresses: Set<string> = new Set();
   for (let i = 0; i < Number(nGauges); i++) {
     const gaugeAddress: string = (
       (await gaugeController.gauges(i)) as string
@@ -66,7 +66,7 @@ async function getActiveRootGaugeAddresses(
   console.log(Array.from(allActiveGaugeAddresses));
 
   // get all root gauges from root gauge factory and return if active
-  let rootGaugeAddresses: Set<string> = new Set();
+  const rootGaugeAddresses: Set<string> = new Set();
   for (const chainId of chainIds) {
     const gaugeCount: BigNumber = await rootGaugeFactory.get_gauge_count(
       chainId
