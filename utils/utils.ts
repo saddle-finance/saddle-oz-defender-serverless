@@ -51,3 +51,14 @@ export async function getFirstContractFromDeployment(
 
   return null; // Return null if no matches are found
 }
+
+export function latestUtcThursdayInUnixSeconds(): number {
+  const now = Date.now();
+  const day = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
+
+  // Calculate the number of milliseconds since Thursday (00:00 UTC)
+  const msSinceThursday = now % (7 * day);
+
+  // Subtract the number of milliseconds since Thursday to get to the most recent Thursday
+  return Math.floor((now - msSinceThursday) / 1000);
+}
