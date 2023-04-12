@@ -53,6 +53,7 @@
     "typechain": "^8.1.0",
     "typescript": "^5.0.3",
     "webpack": "^5.78.0",
-    "webpack-cli": "^5.0.1"
+    "webpack-cli": "^5.0.1",
+    "ethcall": "4.8.13"
   }
 }

@@ -1,3 +1,4 @@
+// External packages that should be excluded from the bundle
 import { BaseProvider } from "@ethersproject/providers";
 import {
   DefenderRelaySigner,
@@ -5,6 +6,12 @@ import {
 } from "defender-relay-client/lib/ethers";
 import { RelayerParams } from "defender-relay-client/lib/relayer";
 import { BigNumber, Signer, ethers } from "ethers";
+
+// Custom imports that should be bundled for this autotask
+import { Contract, Provider } from "ethcall";
+import { CHAIN_ID } from "../../utils/network";
+import * as RootGaugeFactoryJson from "../../saddle-contract/deployments/mainnet/RootGaugeFactory.json";
+import * as GaugeControllerJson from "../../saddle-contract/deployments/mainnet/GaugeController.json";
 
 // Entrypoint for the autotask
 export async function handler(credentials: RelayerParams) {
@@ -18,66 +25,58 @@ export async function handler(credentials: RelayerParams) {
   await ethersScript(provider, signer);
 }
 
-// Importing from other source files is not supported with default typescript builds
-// Would need a module loader like webpack or rollup to support this
-// Until then, constants and helper functions need to be defined within index.ts to prevent compilation errors
-const ROOT_GAUGE_FACTORY_ADDRESS = "0x19a5Ec09eE74f64573ac53f48A48616CE943C047";
-const ROOT_GAUGE_FACTORY_ABI = [
-  "function transmit_emissions(address gauge) external",
-  "function get_gauge_count(uint256 chain_id) external view returns (uint256)",
-  "function get_gauge(uint256 chain_id, uint256 index) external view returns (address)",
-];
-const GAUGE_CONTROLLER_ADDRESS = "0x99Cb6c36816dE2131eF2626bb5dEF7E5cc8b9B14";
-const GAUGE_CONTROLLER_ABI = [
-  "function n_gauges() external view returns (uint256)",
-  "function gauges(uint256) external view returns (address)",
-];
-
-enum CHAIN_ID {
-  ARBITRUM_MAINNET = "42161",
-  OPTIMISM_MAINNET = "10",
-}
-
 async function getActiveRootGaugeAddresses(
-  signer: Signer,
+  ethcallProvider: Provider,
+  rootGaugeFactory: ethers.Contract,
+  gaugeController: ethers.Contract,
   chainIds: string[] = [CHAIN_ID.ARBITRUM_MAINNET, CHAIN_ID.OPTIMISM_MAINNET]
 ): Promise<string[]> {
-  const rootGaugeFactory = new ethers.Contract(
-    ROOT_GAUGE_FACTORY_ADDRESS,
-    ROOT_GAUGE_FACTORY_ABI,
-    signer
+  const rootGaugeFactoryMulticallContract = new Contract(
+    RootGaugeFactoryJson.address,
+    RootGaugeFactoryJson.abi
   );
-  const gaugeController = new ethers.Contract(
-    GAUGE_CONTROLLER_ADDRESS,
-    GAUGE_CONTROLLER_ABI,
-    signer
+
+  const gaugeControllerMulticallContract = new Contract(
+    GaugeControllerJson.address,
+    GaugeControllerJson.abi
   );
+
+  const calls = [];
 
   // get all active gauges from gauge controller
   const nGauges = await gaugeController.n_gauges();
   const allActiveGaugeAddresses: Set<string> = new Set();
   for (let i = 0; i < Number(nGauges); i++) {
-    const gaugeAddress: string = (
-      (await gaugeController.gauges(i)) as string
-    ).toLowerCase();
+    calls.push(gaugeControllerMulticallContract.gauges(i));
+  }
+
+  // Use ethcall to batch all calls
+  const data: string[] = await ethcallProvider.all(calls, "latest");
+  for (const res of data) {
+    const gaugeAddress: string = res.toString().toLowerCase();
     allActiveGaugeAddresses.add(gaugeAddress);
   }
+
   console.log(`Found ${allActiveGaugeAddresses.size} active gauges`);
   console.log(Array.from(allActiveGaugeAddresses));
 
   // get all root gauges from root gauge factory and return if active
   const rootGaugeAddresses: Set<string> = new Set();
   for (const chainId of chainIds) {
-    const gaugeCount: BigNumber = await rootGaugeFactory.get_gauge_count(
+    const gaugeCount: number = (await rootGaugeFactory.get_gauge_count(
       chainId
-    );
+    ) as BigNumber).toNumber();
     console.log(
-      `Found ${gaugeCount.toNumber()} registered root gauges for chain ${chainId}`
+      `Found ${gaugeCount} registered root gauges for chain ${chainId}`
     );
-    for (let i = 0; i < gaugeCount.toNumber(); i++) {
-      const gaugeAddress = (
-        (await rootGaugeFactory.get_gauge(chainId, i)) as string
-      ).toLowerCase();
+
+    const calls = [];
+    for (let i = 0; i < gaugeCount; i++) {
+      calls.push(rootGaugeFactoryMulticallContract.get_gauge(chainId, i));
+    }
+    const data: string[] = await ethcallProvider.all(calls, "latest");
+    for (let i = 0; i < gaugeCount; i++) {
+      const gaugeAddress = data[i].toLowerCase();
       if (!rootGaugeAddresses.has(gaugeAddress)) {
         if (allActiveGaugeAddresses.has(gaugeAddress)) {
           rootGaugeAddresses.add(gaugeAddress);
@@ -97,28 +96,38 @@ async function getActiveRootGaugeAddresses(
 
 // Call transmit_emissions on all RootGauges
 export async function ethersScript(provider: BaseProvider, signer: Signer) {
+  const ethCallProvider = new Provider();
+  await ethCallProvider.init(provider);
+
   console.log(`Associated relayer address is: ${await signer.getAddress()}`);
 
   const rootGaugeFactory = new ethers.Contract(
-    ROOT_GAUGE_FACTORY_ADDRESS,
-    ROOT_GAUGE_FACTORY_ABI,
+    RootGaugeFactoryJson.address,
+    RootGaugeFactoryJson.abi,
     signer
   );
-  const rootGaugeAddresses = await getActiveRootGaugeAddresses(signer, [
-    CHAIN_ID.ARBITRUM_MAINNET,
-    CHAIN_ID.OPTIMISM_MAINNET,
-  ]);
+  const gaugeController = new ethers.Contract(
+    GaugeControllerJson.address,
+    GaugeControllerJson.abi,
+    signer
+  );
+
+  const rootGaugeAddresses = await getActiveRootGaugeAddresses(
+    ethCallProvider,
+    rootGaugeFactory,
+    gaugeController,
+    [CHAIN_ID.ARBITRUM_MAINNET, CHAIN_ID.OPTIMISM_MAINNET]
+  );
 
   const successfulGaugeAddresses: string[] = [];
   const failedGaugeAddresses: string[] = [];
+
   for (const gaugeAddress of rootGaugeAddresses) {
     try {
-      await rootGaugeFactory.connect(signer).transmit_emissions(gaugeAddress);
+      await rootGaugeFactory.transmit_emissions(gaugeAddress);
       successfulGaugeAddresses.push(gaugeAddress);
     } catch (error) {
-      console.warn(
-        `Failed to transmit emissions for gauge ${gaugeAddress}`
-      );
+      console.warn(`Failed to transmit emissions for gauge ${gaugeAddress}`);
       console.error(error);
       failedGaugeAddresses.push(gaugeAddress);
     }
