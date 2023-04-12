@@ -15,13 +15,10 @@ import * as GaugeControllerJson from "../../saddle-contract/deployments/mainnet/
 
 // Entrypoint for the autotask
 export async function handler(credentials: RelayerParams) {
-  // Use the credentials to initialize a DefenderRelayProvider and DefenderRelaySigner
-  // They can be used as ethers.js providers and signers
   const provider = new DefenderRelayProvider(credentials);
   const signer = new DefenderRelaySigner(credentials, provider, {
     speed: "fast",
   });
-  // Run the ethers script logic with the provider and signer
   await ethersScript(provider, signer);
 }
 
@@ -41,55 +38,49 @@ async function getActiveRootGaugeAddresses(
     GaugeControllerJson.abi
   );
 
-  const calls = [];
-
-  // get all active gauges from gauge controller
   const nGauges = await gaugeController.n_gauges();
   const allActiveGaugeAddresses: Set<string> = new Set();
-  for (let i = 0; i < Number(nGauges); i++) {
-    calls.push(gaugeControllerMulticallContract.gauges(i));
-  }
 
-  // Use ethcall to batch all calls
+  // Use Array.from with a map function to create calls for all active gauges
+  const calls = Array.from({ length: Number(nGauges) }, (_, i) =>
+    gaugeControllerMulticallContract.gauges(i)
+  );
+
   const data: string[] = await ethcallProvider.all(calls, "latest");
-  for (const res of data) {
-    const gaugeAddress: string = res.toString().toLowerCase();
-    allActiveGaugeAddresses.add(gaugeAddress);
-  }
+  // Use forEach to add active gauge addresses to the set
+  data.forEach((res) =>
+    allActiveGaugeAddresses.add(res.toString().toLowerCase())
+  );
 
   console.log(`Found ${allActiveGaugeAddresses.size} active gauges`);
   console.log(Array.from(allActiveGaugeAddresses));
 
-  // get all root gauges from root gauge factory and return if active
   const rootGaugeAddresses: Set<string> = new Set();
   for (const chainId of chainIds) {
-    const gaugeCount: number = (await rootGaugeFactory.get_gauge_count(
-      chainId
-    ) as BigNumber).toNumber();
+    const gaugeCount: number = (
+      (await rootGaugeFactory.get_gauge_count(chainId)) as BigNumber
+    ).toNumber();
     console.log(
       `Found ${gaugeCount} registered root gauges for chain ${chainId}`
     );
 
-    const calls = [];
-    for (let i = 0; i < gaugeCount; i++) {
-      calls.push(rootGaugeFactoryMulticallContract.get_gauge(chainId, i));
-    }
+    const calls = Array.from({ length: gaugeCount }, (_, i) =>
+      rootGaugeFactoryMulticallContract.get_gauge(chainId, i)
+    );
     const data: string[] = await ethcallProvider.all(calls, "latest");
-    for (let i = 0; i < gaugeCount; i++) {
-      const gaugeAddress = data[i].toLowerCase();
-      if (!rootGaugeAddresses.has(gaugeAddress)) {
-        if (allActiveGaugeAddresses.has(gaugeAddress)) {
-          rootGaugeAddresses.add(gaugeAddress);
-          console.log(
-            `${gaugeAddress} is a registered root gauge for chain ${chainId}`
-          );
-        } else {
-          console.log(
-            `${gaugeAddress} is is an UNREGISTERED root gauge for chain ${chainId}`
-          );
-        }
+
+    data.forEach((gaugeAddress) => {
+      gaugeAddress = gaugeAddress.toLowerCase();
+      if (
+        !rootGaugeAddresses.has(gaugeAddress) &&
+        allActiveGaugeAddresses.has(gaugeAddress)
+      ) {
+        rootGaugeAddresses.add(gaugeAddress);
+        console.log(
+          `${gaugeAddress} is a registered root gauge for chain ${chainId}`
+        );
       }
-    }
+    });
   }
   return Array.from(rootGaugeAddresses);
 }
