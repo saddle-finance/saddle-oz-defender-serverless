@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "hardhat test",
-    "build": "tsc",
+    "build": "webpack build",
     "deploy": "npm run build && sls deploy",
     "lint": "eslint . --ext .ts --no-eslintrc --config .eslintrc src test utils ",
     "lint:fix": "eslint . --ext .ts --no-eslintrc --config .eslintrc --fix src test utils "
@@ -48,8 +48,11 @@
     "hardhat-gas-reporter": "^1.0.8",
     "serverless": "^3.20.0",
     "solidity-coverage": "^0.8.0",
+    "ts-loader": "^9.4.2",
     "ts-node": ">=8.0.0",
     "typechain": "^8.1.0",
-    "typescript": "^5.0.3"
+    "typescript": "^5.0.3",
+    "webpack": "^5.78.0",
+    "webpack-cli": "^5.0.1"
   }
 }
