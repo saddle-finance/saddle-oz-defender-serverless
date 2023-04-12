@@ -1,0 +1,74 @@
+name: Pull Request CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: ["*"]
+
+env:
+  FOUNDRY_PROFILE: ci
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version: lts/*
+
+      - name: Install Node.js dependencies from package.json
+        run: yarn install --immutable
+
+      - name: Lint all source files
+        run: yarn lint
+
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version: lts/*
+
+      - name: Install Node.js dependencies from package.json
+        run: yarn install --immutable
+
+      - name: Build Typescript source files as Javascript files
+        run: yarn build
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version: lts/*
+
+      - name: Install Node.js dependencies from package.json
+        run: yarn install --immutable
+
+      - name: Test autotask entry points using Hardhat test runner
+        run: yarn test
+        env:
+          ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
