@@ -47,8 +47,8 @@ functions:
 
   arb-child-gauge-factory-automation:
     name: 'Calls mint on ChildGaugeFactory for all child gauges on Arbitrum'
-    path: './dist/root-gauge-factory-automation'
-    relayer: ${self:resources.Resources.relayers.root-gauge-factory-automation-relayer}
+    path: './dist/child-gauge-factory-automation'
+    relayer: ${self:resources.Resources.relayers.child-gauge-factory-automation-relayer}
     trigger:
       type: "schedule"
       cron: "0 20 * * THU"
@@ -56,8 +56,8 @@ functions:
 
   opt-child-gauge-factory-automation:
     name: 'Calls mint on ChildGaugeFactory for all child gauges on Optimism'
-    path: './dist/root-gauge-factory-automation'
-    relayer: ${self:resources.Resources.relayers.root-gauge-factory-automation-relayer}
+    path: './dist/child-gauge-factory-automation'
+    relayer: ${self:resources.Resources.relayers.child-gauge-factory-automation-relayer}
     trigger:
       type: "schedule"
       cron: "0 20 * * THU"
