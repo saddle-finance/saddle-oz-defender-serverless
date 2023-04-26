@@ -47,10 +47,10 @@
   resolved "https://registry.yarnpkg.com/@colors/colors/-/colors-1.5.0.tgz#bb504579c1cae923e6576a4f5da43d25f97bdbd9"
   integrity sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==
 
-"@cowprotocol/ts-dune-client@^0.0.0-beta.2":
-  version "0.0.0-beta.2"
-  resolved "https://registry.yarnpkg.com/@cowprotocol/ts-dune-client/-/ts-dune-client-0.0.0-beta.2.tgz#75a8d0c5f1791f7573b4b864645f5d80b36adab8"
-  integrity sha512-RDm3E91R658/9z9IymoC0swmXZeH0XU/VujEOO9raIBBcY5ISst7s2Ulhoox0Ytc58Vn59esG/P81kBiZD1zIQ==
+"@cowprotocol/ts-dune-client@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@cowprotocol/ts-dune-client/-/ts-dune-client-0.0.1.tgz#846a62314611a3cc080771373dbb3d51a7658dd4"
+  integrity sha512-he5atCTdNU/uBF7utgJfqJnI0v0mJL7g0SiSyDySNgLnGMIbI9CvrzxKQXqJVQCbhreCICNMw879YcgwbaQ9uw==
   dependencies:
     cross-fetch "^3.1.5"
     loglevel "^1.8.0"
@@ -3427,7 +3427,7 @@ ethers@^4.0.40:
     uuid "2.0.1"
     xmlhttprequest "1.8.0"
 
-ethers@^5.4.7, ethers@^5.7.2:
+ethers@^5.4.7, ethers@^5.6.1, ethers@^5.7.2:
   version "5.7.2"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.7.2.tgz#3a7deeabbb8c030d4126b24f84e525466145872e"
   integrity sha512-wswUsmWo1aOK8rR7DIKiWSw9DbLWe6x98Jrn8wcTflTVvaXhAMaB5zGAXy0GYQEQp9iO1iSHWVyARQm11zUtyg==
@@ -4222,6 +4222,14 @@ hardhat-gas-reporter@^1.0.8:
     array-uniq "1.0.3"
     eth-gas-reporter "^0.2.25"
     sha1 "^1.1.1"
+
+hardhat-tracer@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/hardhat-tracer/-/hardhat-tracer-2.2.2.tgz#10a791381774cd526a70cdcc48167e0d1b14ebd9"
+  integrity sha512-+zZnVy24XgB/sksczP914Ar0HuYhSqAu2dgelVL3+xetLq7gLDAr3N28V4T1sCRM97oJ1PLx0iHzFV1OvYn0Yw==
+  dependencies:
+    chalk "^4.1.2"
+    ethers "^5.6.1"
 
 hardhat@^2.13.0:
   version "2.13.0"

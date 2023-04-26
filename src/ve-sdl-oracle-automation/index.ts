@@ -8,6 +8,7 @@ import { RelayerParams } from "defender-relay-client/lib/relayer";
 import { Signer, ethers } from "ethers";
 
 // Custom imports that should be bundled for this autotask
+// Try to import specific functions instead of the entire package if possible
 import {
   QueryParameter,
   DuneClient,
@@ -15,8 +16,19 @@ import {
 } from "@cowprotocol/ts-dune-client";
 import { CHAIN_ID } from "../../utils/network";
 import { latestUtcThursdayInUnixSeconds } from "../../utils/utils";
-import * as RootOracleJson from "../../saddle-contract/deployments/mainnet/RootOracle.json";
-import * as Multicall3Json from "../../saddle-contract/deployments/mainnet/Multicall3.json";
+import {
+  address as RootOracleAddress,
+  abi as RootOracleABI,
+} from "../../saddle-contract/deployments/mainnet/RootOracle.json";
+import {
+  address as Multicall3Address,
+  abi as Multicall3Abi,
+} from "../../saddle-contract/deployments/mainnet/Multicall3.json";
+import {
+  address as VeSDLAddress,
+  abi as VeSDLABI,
+} from "../../saddle-contract/deployments/mainnet/VotingEscrow.json";
+import { Contract, Provider } from "ethcall";
 
 // Entrypoint for the autotask
 export async function handler(credentials: RelayerParams) {
@@ -48,7 +60,6 @@ export async function fetchNewVeSDLLockers(): Promise<ExecutionResult> {
 
   // Call the refresh function with the above query parameters
   return client.refresh(queryID, parameters).then((executionResult) => {
-    console.log(executionResult.result);
     if (executionResult.result) {
       return executionResult.result;
     } else {
@@ -61,6 +72,10 @@ export async function fetchNewVeSDLLockers(): Promise<ExecutionResult> {
 export async function ethersScript(provider: BaseProvider, signer: Signer) {
   console.log(`Associated relayer address is: ${await signer.getAddress()}`);
 
+  // Create new ethcall Provider
+  const ethCallProvider = new Provider();
+  await ethCallProvider.init(provider);
+
   // Fetching new veSDLLockers using the fetchNewVeSDLLockers function
   const duneQueryResult = await fetchNewVeSDLLockers();
 
@@ -70,40 +85,55 @@ export async function ethersScript(provider: BaseProvider, signer: Signer) {
 
   // Creating a new instance of RootOracle contract with the address and ABI json objects imported from "/saddle-contract/deployments/mainnet/"
   const rootOracle = new ethers.Contract(
-    RootOracleJson.address,
-    RootOracleJson.abi,
+    RootOracleAddress,
+    RootOracleABI,
     signer
   );
 
   // Creating a new instance of Multicall3 contract with the address and ABI json objects imported from "/saddle-contract/deployments/mainnet/"
   const multicall3 = new ethers.Contract(
-    Multicall3Json.address,
-    Multicall3Json.abi,
+    Multicall3Address,
+    Multicall3Abi,
     signer
   );
 
-  // Defining an interface for call3 objects
+  // Use ethcall to read balances of wallets from the dune query result
+  const veSDLMulticallContract = new Contract(VeSDLAddress, VeSDLABI);
+  const readCalls = [];
+  const walletsWithBalance = new Set();
+  for (const wallet of wallets) {
+    readCalls.push(veSDLMulticallContract.balanceOf(wallet));
+  }
+
+  // Only use addresses with positive veSDL balances
+  const data: string[] = await ethCallProvider.all(readCalls);
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].toString() !== "0") {
+      walletsWithBalance.add(wallets[i]);
+    }
+  }
+
+  // Creating a calls array, containing objects of the Call3 interface defined above.
+  // Each object is a call to a RootOracle push function for a wallet and chain id combination
   interface Call3 {
     target: string;
     allowFailure: boolean;
     callData: string;
   }
-
-  // Creating a calls array, containing objects of the Call3 interface defined above. Each object is a call to a RootOracle push function for a wallet and chain id combination
   const calls: Call3[] = [];
 
   for (const network of [
     CHAIN_ID.ARBITRUM_MAINNET,
     CHAIN_ID.OPTIMISM_MAINNET,
   ]) {
-    for (const wallet of wallets) {
+    for (const wallet of walletsWithBalance) {
       calls.push({
         target: rootOracle.address,
         allowFailure: false,
-        callData: rootOracle.interface.encodeFunctionData("push", [
-          wallet,
-          network,
-        ]),
+        callData: rootOracle.interface.encodeFunctionData(
+          "push(uint256,address)",
+          [network, wallet]
+        ),
       });
     }
   }
