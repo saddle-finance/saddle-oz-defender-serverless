@@ -16,18 +16,9 @@ import {
 } from "@cowprotocol/ts-dune-client";
 import { CHAIN_ID } from "../../utils/network";
 import { latestUtcThursdayInUnixSeconds } from "../../utils/utils";
-import {
-  address as RootOracleAddress,
-  abi as RootOracleABI,
-} from "../../saddle-contract/deployments/mainnet/RootOracle.json";
-import {
-  address as Multicall3Address,
-  abi as Multicall3Abi,
-} from "../../saddle-contract/deployments/mainnet/Multicall3.json";
-import {
-  address as VeSDLAddress,
-  abi as VeSDLABI,
-} from "../../saddle-contract/deployments/mainnet/VotingEscrow.json";
+import * as RootOracleJson from "../../saddle-contract/deployments/mainnet/RootOracle.json";
+import * as Multicall3Json from "../../saddle-contract/deployments/mainnet/Multicall3.json";
+import * as VeSDLJson from "../../saddle-contract/deployments/mainnet/VotingEscrow.json";
 import { Contract, Provider } from "ethcall";
 
 // Entrypoint for the autotask
@@ -85,20 +76,20 @@ export async function ethersScript(provider: BaseProvider, signer: Signer) {
 
   // Creating a new instance of RootOracle contract with the address and ABI json objects imported from "/saddle-contract/deployments/mainnet/"
   const rootOracle = new ethers.Contract(
-    RootOracleAddress,
-    RootOracleABI,
+    RootOracleJson.address,
+    RootOracleJson.abi,
     signer
   );
 
   // Creating a new instance of Multicall3 contract with the address and ABI json objects imported from "/saddle-contract/deployments/mainnet/"
   const multicall3 = new ethers.Contract(
-    Multicall3Address,
-    Multicall3Abi,
+    Multicall3Json.address,
+    Multicall3Json.abi,
     signer
   );
 
   // Use ethcall to read balances of wallets from the dune query result
-  const veSDLMulticallContract = new Contract(VeSDLAddress, VeSDLABI);
+  const veSDLMulticallContract = new Contract(VeSDLJson.address, VeSDLJson.abi);
   const readCalls = [];
   const walletsWithBalance = new Set();
   for (const wallet of wallets) {
