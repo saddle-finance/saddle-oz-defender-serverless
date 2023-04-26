@@ -18,7 +18,7 @@ provider:
   stackName: 'mystack'
   # SSOT: use this template as a single source of truth. 
   # This will delete Defender resources (with the exception of Relayers) not found in this template upon deployment.
-  ssot: true
+  ssot: false
 
 defender:
   key: "${env:TEAM_API_KEY}"
@@ -51,7 +51,8 @@ resources:
       root-gauge-factory-automation-policy:
         gas-price-cap: 1000
         whitelist-receivers:
-          - "0x0f06aB75c7DD497981b75CD82F6566e3a5CAd8f2"
+          - "0x19a5Ec09eE74f64573ac53f48A48616CE943C047"
+          - "0x99Cb6c36816dE2131eF2626bb5dEF7E5cc8b9B14"
         eip1559-pricing: true
         private-transactions: false
 
