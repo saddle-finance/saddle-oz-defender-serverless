@@ -14,11 +14,12 @@ describe("child-gauge-factory-automation opt test", () => {
   let signer: providers.JsonRpcSigner;
 
   beforeEach(async () => {
-    // Fork optimism at block 739837
-    console.log("Forking optimism at block 739837...");
+    // Fork optimism at block 94515971
+    // TODO: Use block number soon after epoch transition
+    console.log("Forking optimism at block 94515971...");
     await reset(
       ALCHEMY_BASE_URL[CHAIN_ID.OPTIMISM_MAINNET] + process.env.ALCHEMY_API_KEY,
-      739837
+      94515971
     );
     provider = ethers.provider;
 

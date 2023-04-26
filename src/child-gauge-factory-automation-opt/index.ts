@@ -29,8 +29,8 @@ async function getChildGaugeAddresses(
         ChildGaugeFactoryJson.address,
         ChildGaugeFactoryJson.abi
     );
-
-    const gaugeCount = await childGaugeFactory.get_gauge_count();
+  
+    const gaugeCount = await childGaugeFactory.get_gauge_count({ gasLimit: 1_000_000 });
     const allGaugeAddresses: Set<string> = new Set();
   
     // Use Array.from with a map function to create calls for all child gauges
@@ -55,7 +55,13 @@ async function getChildGaugeAddresses(
 export async function ethersScript(provider: BaseProvider, signer: Signer) {
     const ethCallProvider = new Provider();
     await ethCallProvider.init(provider);
-  
+
+    // Override the default multicall contract address on Arbitrum
+    ethCallProvider.multicall2 = {
+      address: '0x054FfF7ee30953DdB739458e11EAAd51224343a1',
+      block: 31946661,
+    }
+    
     console.log(`Associated relayer address is: ${await signer.getAddress()}`);
   
     const childGaugeFactory = new ethers.Contract(

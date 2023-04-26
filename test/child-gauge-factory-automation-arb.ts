@@ -15,6 +15,7 @@ describe("child-gauge-factory-automation arb test", () => {
 
   beforeEach(async () => {
     // Fork arbitrum at block 84519491
+    // TODO: Use block number soon after epoch transition
     console.log("Forking arbitrum at block 84519491...");
     await reset(
       ALCHEMY_BASE_URL[CHAIN_ID.ARBITRUM_MAINNET] + process.env.ALCHEMY_API_KEY,
