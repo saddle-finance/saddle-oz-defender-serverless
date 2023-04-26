@@ -45,6 +45,25 @@ functions:
     environment:
       DUNE_API_KEY: "${env:DUNE_API_KEY}"
 
+  arb-child-gauge-factory-automation:
+    name: 'Calls mint on ChildGaugeFactory for all child gauges on Arbitrum'
+    path: './dist/root-gauge-factory-automation'
+    relayer: ${self:resources.Resources.relayers.root-gauge-factory-automation-relayer}
+    trigger:
+      type: "schedule"
+      cron: "0 20 * * THU"
+    paused: false
+
+  opt-child-gauge-factory-automation:
+    name: 'Calls mint on ChildGaugeFactory for all child gauges on Optimism'
+    path: './dist/root-gauge-factory-automation'
+    relayer: ${self:resources.Resources.relayers.root-gauge-factory-automation-relayer}
+    trigger:
+      type: "schedule"
+      cron: "0 20 * * THU"
+    paused: false
+
+
 resources:
   Resources:
     policies:
@@ -55,12 +74,35 @@ resources:
         eip1559-pricing: true
         private-transactions: false
 
+      child-gauge-factory-automation-policy:
+        gas-price-cap: 1000
+        whitelist-receivers:
+          - "0x19a5Ec09eE74f64573ac53f48A48616CE943C047"
+        eip1559-pricing: true
+        private-transactions: false
+
     relayers:
       root-gauge-factory-automation-relayer:
         name: "RootGaugeFactory automation relayer"
         network: "mainnet"
         min-balance: 1000
         policy: ${self:resources.Resources.policies.root-gauge-factory-automation-policy}
+        api-keys:
+          - key1
+
+      child-gauge-factory-automation-relayer-arb:
+        name: "ChildGaugeFactory automation relayer Arb"
+        network: "arbitrum"
+        min-balance: 1000
+        policy: ${self:resources.Resources.policies.child-gauge-factory-automation-policy}
+        api-keys:
+          - key1
+
+      child-gauge-factory-automation-relayer-opt:
+        name: "ChildGaugeFactory automation relayer Opt"
+        network: "optimism"
+        min-balance: 1000
+        policy: ${self:resources.Resources.policies.child-gauge-factory-automation-policy}
         api-keys:
           - key1
 
