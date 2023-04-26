@@ -24,22 +24,23 @@ async function getChildGaugeAddresses(
     ethcallProvider: Provider,
     childGaugeFactory: ethers.Contract,
   ): Promise<string[]> {
+
     const childGaugeFactoryMulticallContract = new Contract(
-      ChildGaugeFactoryJson.address,
-      ChildGaugeFactoryJson.abi
+        ChildGaugeFactoryJson.address,
+        ChildGaugeFactoryJson.abi
     );
 
-  
     const gaugeCount = await childGaugeFactory.get_gauge_count();
     const allGaugeAddresses: Set<string> = new Set();
-  
+
     // Use Array.from with a map function to create calls for all child gauges
     const calls = Array.from({ length: Number(gaugeCount) }, (_, i) =>
-        childGaugeFactory.get_gauge(i)
+        childGaugeFactoryMulticallContract.get_gauge(i)
     );
   
     const data: string[] = await ethcallProvider.all(calls, "latest");
-    // Use forEach to add active gauge addresses to the set
+
+    // Use forEach to add gauge addresses to the set
     data.forEach((res) =>
       allGaugeAddresses.add(res.toString().toLowerCase())
     );
@@ -63,7 +64,7 @@ export async function ethersScript(provider: BaseProvider, signer: Signer) {
       ChildGaugeFactoryJson.abi,
       signer
     );
-    
+
     const childGaugeAddresses = await getChildGaugeAddresses(
       ethCallProvider,
       childGaugeFactory,
@@ -74,7 +75,7 @@ export async function ethersScript(provider: BaseProvider, signer: Signer) {
   
     for (const gaugeAddress of childGaugeAddresses) {
       try {
-        await childGaugeFactory.mint(gaugeAddress);
+        await childGaugeFactory.mint(gaugeAddress); // TODO: use multicall
         successfulGaugeAddresses.push(gaugeAddress);
       } catch (error) {
         console.warn(`Failed to call mint for gauge ${gaugeAddress}`);

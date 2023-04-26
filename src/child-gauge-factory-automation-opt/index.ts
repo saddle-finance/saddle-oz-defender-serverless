@@ -24,17 +24,18 @@ async function getChildGaugeAddresses(
     ethcallProvider: Provider,
     childGaugeFactory: ethers.Contract,
   ): Promise<string[]> {
-    const childGaugeFactoryMulticallContract = new Contract(
-      ChildGaugeFactoryJson.address,
-      ChildGaugeFactoryJson.abi
-    );
   
+    const childGaugeFactoryMulticallContract = new Contract(
+        ChildGaugeFactoryJson.address,
+        ChildGaugeFactoryJson.abi
+    );
+
     const gaugeCount = await childGaugeFactory.get_gauge_count();
     const allGaugeAddresses: Set<string> = new Set();
   
     // Use Array.from with a map function to create calls for all child gauges
     const calls = Array.from({ length: Number(gaugeCount) }, (_, i) =>
-        childGaugeFactory.get_gauge(i)
+        childGaugeFactoryMulticallContract.get_gauge(i)
     );
   
     const data: string[] = await ethcallProvider.all(calls, "latest");
@@ -47,7 +48,6 @@ async function getChildGaugeAddresses(
     console.log(Array.from(allGaugeAddresses));
 
     return Array.from(allGaugeAddresses);
-
   }
 
 
