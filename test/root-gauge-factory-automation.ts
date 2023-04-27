@@ -34,4 +34,28 @@ describe("root-gauge-factory-automation test", () => {
     await ethersScript(provider, signer);
     expect(true).to.equal(true);
   });
+
+  it("Successfully tops up Arbitrum root gauges if needed", async () => {
+    const arbRootGauge = "0x0A18D5679C5c8b56Da0D87E308DB9EE2db701BaC"; // RootGauge_42161_SaddleUSXFRAXBPMetaPoolLPToken
+    await setEtherBalance(
+      arbRootGauge,
+      ethers.utils.parseEther('0.03')
+    );
+    await ethersScript(provider, signer);
+    expect((await provider.getBalance(arbRootGauge)).gt(ethers.utils.parseEther('0.07')));
+  });
+
+  it("Fails to top up Arbitrum root gauges if relayer too low on ETH", async () => {
+    const arbRootGauge = "0x0A18D5679C5c8b56Da0D87E308DB9EE2db701BaC"; // RootGauge_42161_SaddleUSXFRAXBPMetaPoolLPToken
+    await setEtherBalance(
+      arbRootGauge,
+      ethers.utils.parseEther('0.03')
+    );
+    await setEtherBalance(
+      RELAYER_ADDRESS,
+      ethers.utils.parseEther('0.01')
+    );
+    await ethersScript(provider, signer);
+    expect((await provider.getBalance(arbRootGauge)).eq(ethers.utils.parseEther('0.03')));
+  });
 });

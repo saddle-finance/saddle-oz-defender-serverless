@@ -85,6 +85,7 @@ async function getActiveRootGaugeAddresses(
   return Array.from(rootGaugeAddresses);
 }
 
+
 // Call transmit_emissions on all RootGauges
 export async function ethersScript(provider: BaseProvider, signer: Signer) {
   const ethCallProvider = new Provider();
@@ -110,10 +111,32 @@ export async function ethersScript(provider: BaseProvider, signer: Signer) {
     [CHAIN_ID.ARBITRUM_MAINNET, CHAIN_ID.OPTIMISM_MAINNET]
   );
 
+  const arbRootGaugeAddresses = await getActiveRootGaugeAddresses(
+    ethCallProvider,
+    rootGaugeFactory,
+    gaugeController,
+    [CHAIN_ID.ARBITRUM_MAINNET]
+  );
+
   const successfulGaugeAddresses: string[] = [];
   const failedGaugeAddresses: string[] = [];
 
   for (const gaugeAddress of rootGaugeAddresses) {
+    if (arbRootGaugeAddresses.includes(gaugeAddress)) {
+      const gaugeEthBalance = await provider.getBalance(gaugeAddress);
+      if (gaugeEthBalance < ethers.utils.parseEther('0.05')) {
+        try {
+          const tx = await signer.sendTransaction({
+            to: gaugeAddress,
+            value: ethers.utils.parseEther('0.05')
+          });
+          console.log(`Topped up gauge ${gaugeAddress} with 0.05 ETH`)
+        } catch (error) {
+          console.warn(`Failed to send ETH to gauge ${gaugeAddress} (most likely need to top up relayer)`);
+          console.error(error);
+        }
+      }
+    }
     try {
       await rootGaugeFactory.transmit_emissions(gaugeAddress);
       successfulGaugeAddresses.push(gaugeAddress);
