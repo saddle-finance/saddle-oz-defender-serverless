@@ -83,10 +83,10 @@
   resolved "https://registry.yarnpkg.com/@colors/colors/-/colors-1.5.0.tgz#bb504579c1cae923e6576a4f5da43d25f97bdbd9"
   integrity sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==
 
-"@cowprotocol/ts-dune-client@^0.0.0-beta.2":
-  version "0.0.0-beta.2"
-  resolved "https://registry.yarnpkg.com/@cowprotocol/ts-dune-client/-/ts-dune-client-0.0.0-beta.2.tgz#75a8d0c5f1791f7573b4b864645f5d80b36adab8"
-  integrity sha512-RDm3E91R658/9z9IymoC0swmXZeH0XU/VujEOO9raIBBcY5ISst7s2Ulhoox0Ytc58Vn59esG/P81kBiZD1zIQ==
+"@cowprotocol/ts-dune-client@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@cowprotocol/ts-dune-client/-/ts-dune-client-0.0.1.tgz#846a62314611a3cc080771373dbb3d51a7658dd4"
+  integrity sha512-he5atCTdNU/uBF7utgJfqJnI0v0mJL7g0SiSyDySNgLnGMIbI9CvrzxKQXqJVQCbhreCICNMw879YcgwbaQ9uw==
   dependencies:
     cross-fetch "^3.1.5"
     loglevel "^1.8.0"
@@ -3465,7 +3465,7 @@ ethers@^4.0.40:
     setimmediate "1.0.4"
     uuid "2.0.1"
     xmlhttprequest "1.8.0"
-
+    
 ethers@^5.4.7, ethers@^5.6.1, ethers@^5.7.1, ethers@^5.7.2:
   version "5.7.2"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.7.2.tgz#3a7deeabbb8c030d4126b24f84e525466145872e"

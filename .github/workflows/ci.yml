@@ -72,3 +72,4 @@ jobs:
         run: yarn test
         env:
           ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
+          DUNE_API_KEY: ${{ secrets.DUNE_API_KEY }}

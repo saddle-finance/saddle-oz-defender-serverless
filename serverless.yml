@@ -79,6 +79,7 @@ resources:
         gas-price-cap: 1000
         whitelist-receivers:
           - "0x19a5Ec09eE74f64573ac53f48A48616CE943C047"
+
         eip1559-pricing: true
         private-transactions: false
 
