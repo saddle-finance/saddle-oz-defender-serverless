@@ -34,6 +34,17 @@ functions:
       cron: "0 0 * * THU"
     paused: false
 
+  ve-sdl-oracle-automation:
+    name: 'Bridges ve-sdl balance info to side chains using RootOracle'
+    path: './dist/ve-sdl-oracle-automation'
+    relayer: ${self:resources.Resources.relayers.root-gauge-factory-automation-relayer}
+    trigger:
+      type: "schedule"
+      cron: "0 0 * * THU"
+    paused: false
+    environment:
+      DUNE_API_KEY: "${env:DUNE_API_KEY}"
+
 resources:
   Resources:
     policies:

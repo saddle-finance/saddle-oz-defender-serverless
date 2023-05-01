@@ -43,6 +43,7 @@
     "defender-serverless": "^1.0.4",
     "dotenv": "^16.0.3",
     "eslint": "^8.37.0",
+    "ethcall": "4.8.13",
     "ethers": "^5.4.7",
     "hardhat": "^2.13.0",
     "hardhat-gas-reporter": "^1.0.8",
@@ -54,6 +55,7 @@
     "typescript": "^5.0.3",
     "webpack": "^5.78.0",
     "webpack-cli": "^5.0.1",
-    "ethcall": "4.8.13"
+    "@cowprotocol/ts-dune-client": "^0.0.1",
+    "hardhat-tracer": "^2.2.2"
   }
 }
