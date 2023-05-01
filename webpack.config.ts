@@ -1,6 +1,6 @@
 import glob from "glob";
 import path from "path";
-
+import TerserPlugin from "terser-webpack-plugin";
 interface EntryObject {
   [key: string]: string;
 }
@@ -28,7 +28,24 @@ module.exports = {
     ],
   },
   optimization: {
-    usedExports: true,
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          keep_fnames: true, // don't change function names
+          keep_classnames: true, // don't change class names
+          compress: {
+            dead_code: true,
+            drop_console: false,
+            drop_debugger: true,
+          },
+          output: {
+            comments: false,
+            beautify: true,
+          },
+        },
+      }),
+    ],
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
