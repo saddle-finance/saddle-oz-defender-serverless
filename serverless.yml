@@ -42,8 +42,7 @@ functions:
       type: "schedule"
       cron: "0 0 * * THU"
     paused: false
-    environment:
-      DUNE_API_KEY: ${env:DUNE_API_KEY}
+
 
   arb-child-gauge-factory-automation:
     name: 'Calls mint on ChildGaugeFactory for all child gauges on Arbitrum'
