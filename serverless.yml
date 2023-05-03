@@ -43,7 +43,6 @@ functions:
       cron: "0 0 * * THU"
     paused: false
 
-
   arb-child-gauge-factory-automation:
     name: 'Calls mint on ChildGaugeFactory for all child gauges on Arbitrum'
     path: './dist/child-gauge-factory-automation'
@@ -57,6 +56,15 @@ functions:
     name: 'Calls mint on ChildGaugeFactory for all child gauges on Optimism'
     path: './dist/child-gauge-factory-automation'
     relayer: ${self:resources.Resources.relayers.child-gauge-factory-automation-relayer-opt}
+    trigger:
+      type: "schedule"
+      cron: "0 20 * * THU"
+    paused: false
+
+  example-task:
+    name: 'Test function for debugging'
+    path: './dist/example-task'
+    relayer: ${self:resources.Resources.relayers.child-gauge-factory-automation-relayer-arb}
     trigger:
       type: "schedule"
       cron: "0 20 * * THU"
