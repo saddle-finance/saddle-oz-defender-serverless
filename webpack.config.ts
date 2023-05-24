@@ -1,7 +1,6 @@
 import glob from "glob";
 import path from "path";
-import webpack from "webpack";
-// import TerserPlugin from "terser-webpack-plugin";
+
 interface EntryObject {
   [key: string]: string;
 }
