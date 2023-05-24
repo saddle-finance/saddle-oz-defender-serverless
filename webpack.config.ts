@@ -1,6 +1,7 @@
 import glob from "glob";
 import path from "path";
-import TerserPlugin from "terser-webpack-plugin";
+import webpack from "webpack";
+// import TerserPlugin from "terser-webpack-plugin";
 interface EntryObject {
   [key: string]: string;
 }
@@ -13,47 +14,36 @@ module.exports = {
       obj[parentDir] = filePath;
       return obj;
     }, {}),
-  output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: "[name]/index.js",
-  },
-  target: "node",
+  target: 'node',
+  mode: 'development',
+  devtool: 'cheap-module-source-map',
   module: {
     rules: [
-      {
-        test: /\.tsx?$/,
-        use: "ts-loader",
-        exclude: /node_modules/,
-      },
-    ],
-  },
-  optimization: {
-    minimize: true,
-    minimizer: [
-      new TerserPlugin({
-        terserOptions: {
-          keep_fnames: true, // don't change function names
-          keep_classnames: true, // don't change class names
-          compress: {
-            dead_code: true,
-            drop_console: false,
-            drop_debugger: true,
-          },
-          output: {
-            comments: false,
-            beautify: true,
-          },
-        },
-      }),
+      { test: /\.tsx?$/, use: 'ts-loader', exclude: /node_modules/ },
     ],
   },
   resolve: {
-    extensions: [".tsx", ".ts", ".js"],
+    extensions: ['.tsx', '.ts', '.js'],
   },
-  mode: "production",
-  externals: {
-    ethers: "commonjs2 ethers",
-    "defender-relay-client": "commonjs2 defender-relay-client",
-    "@ethersproject/providers": "commonjs2 @ethersproject/providers",
+  externals: [
+    // List here all dependencies available on the Autotask environment
+    /axios/,
+    /apollo-client/,
+    /defender-[^\-]+-client/,
+    /ethers/,
+    /web3/,
+    /@ethersproject\/.*/,
+    /aws-sdk/,
+    /aws-sdk\/.*/,
+  ],
+  externalsType: 'commonjs2',
+  plugins: [
+    // List here all dependencies that are not run in the Autotask environment
+    new webpack.IgnorePlugin({ resourceRegExp: /dotenv/ }),
+  ],
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "[name]/index.js",
+    libraryTarget: "commonjs2"
   },
 };
