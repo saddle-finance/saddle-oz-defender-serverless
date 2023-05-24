@@ -45,7 +45,7 @@ functions:
 
   arb-child-gauge-factory-automation:
     name: 'Calls mint on ChildGaugeFactory for all child gauges on Arbitrum'
-    path: './dist/child-gauge-factory-automation'
+    path: './dist/child-gauge-factory-automation-arb'
     relayer: ${self:resources.Resources.relayers.child-gauge-factory-automation-relayer-arb}
     trigger:
       type: "schedule"
@@ -54,7 +54,7 @@ functions:
 
   opt-child-gauge-factory-automation:
     name: 'Calls mint on ChildGaugeFactory for all child gauges on Optimism'
-    path: './dist/child-gauge-factory-automation'
+    path: './dist/child-gauge-factory-automation-opt'
     relayer: ${self:resources.Resources.relayers.child-gauge-factory-automation-relayer-opt}
     trigger:
       type: "schedule"
