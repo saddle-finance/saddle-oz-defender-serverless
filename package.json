@@ -25,6 +25,7 @@
   ],
   "license": "MIT",
   "devDependencies": {
+    "@cowprotocol/ts-dune-client": "^0.0.1",
     "@ethersproject/abi": "^5.4.7",
     "@ethersproject/providers": "^5.4.7",
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.0",
@@ -47,15 +48,15 @@
     "ethers": "^5.4.7",
     "hardhat": "^2.14.0",
     "hardhat-gas-reporter": "^1.0.8",
+    "hardhat-tracer": "^2.2.2",
     "serverless": "^3.20.0",
+    "serverless-dotenv-plugin": "^6.0.0",
     "solidity-coverage": "^0.8.0",
     "ts-loader": "^9.4.2",
     "ts-node": ">=8.0.0",
     "typechain": "^8.1.0",
     "typescript": "^5.0.3",
     "webpack": "^5.78.0",
-    "webpack-cli": "^5.0.1",
-    "@cowprotocol/ts-dune-client": "^0.0.1",
-    "hardhat-tracer": "^2.2.2"
+    "webpack-cli": "^5.0.1"
   }
 }
