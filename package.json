@@ -9,20 +9,10 @@
   "scripts": {
     "test": "hardhat test",
     "build": "webpack build",
-    "deploy": "npm run build && sls deploy",
+    "deploy": "yarn build && sls deploy",
     "lint": "eslint . --ext .ts --no-eslintrc --config .eslintrc src test utils ",
     "lint:fix": "eslint . --ext .ts --no-eslintrc --config .eslintrc --fix src test utils "
   },
-  "contributors": [
-    {
-      "name": "Santiago Palladino",
-      "email": "santiago@openzeppelin.com"
-    },
-    {
-      "name": "Nami Shah",
-      "email": "nami@openzeppelin.com"
-    }
-  ],
   "license": "MIT",
   "devDependencies": {
     "@ethersproject/abi": "^5.4.7",
@@ -37,16 +27,17 @@
     "@types/chai": "^4.2.0",
     "@types/mocha": ">=9.1.0",
     "@types/node": ">=12.0.0",
+    "@types/webpack-node-externals": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",
     "chai": "^4.2.0",
-    "defender-serverless": "^1.0.4",
+    "defender-serverless": "^1.0.14",
     "dotenv": "^16.0.3",
     "eslint": "^8.37.0",
-    "ethcall": "4.8.13",
     "ethers": "^5.4.7",
     "hardhat": "^2.14.0",
     "hardhat-gas-reporter": "^1.0.8",
+    "hardhat-tracer": "^2.2.2",
     "serverless": "^3.20.0",
     "solidity-coverage": "^0.8.0",
     "ts-loader": "^9.4.2",
@@ -55,7 +46,10 @@
     "typescript": "^5.0.3",
     "webpack": "^5.78.0",
     "webpack-cli": "^5.0.1",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "dependencies": {
     "@cowprotocol/ts-dune-client": "^0.0.1",
-    "hardhat-tracer": "^2.2.2"
+    "ethcall": "4.8.13"
   }
 }
