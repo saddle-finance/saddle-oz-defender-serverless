@@ -75,7 +75,7 @@ resources:
   Resources:
     policies:
       root-gauge-factory-automation-policy:
-        gas-price-cap: 60000000000
+        gas-price-cap: 60000000000  # 60 gwei for mainnet
         whitelist-receivers:
           - "0x19a5Ec09eE74f64573ac53f48A48616CE943C047" # RootGaugeFactory
           - "0x99Cb6c36816dE2131eF2626bb5dEF7E5cc8b9B14" # GaugeController
@@ -84,7 +84,7 @@ resources:
         private-transactions: false
 
       child-gauge-factory-automation-policy:
-        gas-price-cap: 60000000000
+        gas-price-cap: 10000000000  # 10 gwei for side chains
         whitelist-receivers:
           - "0x19a5Ec09eE74f64573ac53f48A48616CE943C047" # ChildGaugeFactory
           - "0xca11bde05977b3631167028862be2a173976ca11" # Multicall3
