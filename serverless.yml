@@ -31,7 +31,7 @@ functions:
     relayer: ${self:resources.Resources.relayers.root-gauge-factory-automation-relayer}
     trigger:
       type: "schedule"
-      cron: "0 0 * * THU"
+      cron: "5 0 * * THU"
     paused: false
 
   ve-sdl-oracle-automation:
@@ -40,7 +40,7 @@ functions:
     relayer: ${self:resources.Resources.relayers.root-gauge-factory-automation-relayer}
     trigger:
       type: "schedule"
-      cron: "0 0 * * THU"
+      cron: "3 0 * * THU"
     paused: false
 
   arb-child-gauge-factory-automation:
@@ -49,7 +49,7 @@ functions:
     relayer: ${self:resources.Resources.relayers.child-gauge-factory-automation-relayer-arb}
     trigger:
       type: "schedule"
-      cron: "0 20 * * THU"
+      cron: "35 0 * * THU"
     paused: false
 
   opt-child-gauge-factory-automation:
@@ -58,7 +58,7 @@ functions:
     relayer: ${self:resources.Resources.relayers.child-gauge-factory-automation-relayer-opt}
     trigger:
       type: "schedule"
-      cron: "0 20 * * THU"
+      cron: "35 0 * * THU"
     paused: false
 
   example-task:
@@ -75,7 +75,7 @@ resources:
   Resources:
     policies:
       root-gauge-factory-automation-policy:
-        gas-price-cap: 60000000000  # 60 gwei for mainnet
+        gas-price-cap: 30000000000  # 30 gwei for mainnet
         whitelist-receivers:
           - "0x19a5Ec09eE74f64573ac53f48A48616CE943C047" # RootGaugeFactory
           - "0x99Cb6c36816dE2131eF2626bb5dEF7E5cc8b9B14" # GaugeController
