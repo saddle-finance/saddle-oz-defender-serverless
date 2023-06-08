@@ -85,7 +85,6 @@ async function getActiveRootGaugeAddresses(
   return Array.from(rootGaugeAddresses);
 }
 
-
 // Call transmit_emissions on all RootGauges
 export async function ethersScript(provider: BaseProvider, signer: Signer) {
   const ethCallProvider = new Provider();
@@ -104,11 +103,11 @@ export async function ethersScript(provider: BaseProvider, signer: Signer) {
     signer
   );
 
-  const rootGaugeAddresses = await getActiveRootGaugeAddresses(
+  const optRootGaugeAddresses = await getActiveRootGaugeAddresses(
     ethCallProvider,
     rootGaugeFactory,
     gaugeController,
-    [CHAIN_ID.ARBITRUM_MAINNET, CHAIN_ID.OPTIMISM_MAINNET]
+    [CHAIN_ID.OPTIMISM_MAINNET]
   );
 
   const arbRootGaugeAddresses = await getActiveRootGaugeAddresses(
@@ -118,27 +117,39 @@ export async function ethersScript(provider: BaseProvider, signer: Signer) {
     [CHAIN_ID.ARBITRUM_MAINNET]
   );
 
+  const rootGaugeAddresses = optRootGaugeAddresses.concat(
+    arbRootGaugeAddresses
+  );
+
   const successfulGaugeAddresses: string[] = [];
   const failedGaugeAddresses: string[] = [];
 
   for (const gaugeAddress of rootGaugeAddresses) {
     if (arbRootGaugeAddresses.includes(gaugeAddress)) {
       const gaugeEthBalance = await provider.getBalance(gaugeAddress);
-      if (gaugeEthBalance < ethers.utils.parseEther('0.05')) {
+      if (gaugeEthBalance < ethers.utils.parseEther("0.05")) {
         try {
           const tx = await signer.sendTransaction({
             to: gaugeAddress,
-            value: ethers.utils.parseEther('0.05')
+            value: ethers.utils.parseEther("0.05"),
           });
-          console.log(`Topped up gauge ${gaugeAddress} with 0.05 ETH`)
+          console.log(`Topped up gauge ${gaugeAddress} with 0.05 ETH`);
         } catch (error) {
-          console.warn(`Failed to send ETH to gauge ${gaugeAddress} (most likely need to top up relayer)`);
+          console.warn(
+            `Failed to send ETH to gauge ${gaugeAddress} (most likely need to top up relayer)`
+          );
           console.error(error);
         }
       }
     }
     try {
-      await rootGaugeFactory.transmit_emissions(gaugeAddress);
+      if (optRootGaugeAddresses.includes(gaugeAddress)) {
+        await rootGaugeFactory.transmit_emissions(gaugeAddress, {
+          gasLimit: 700_000,
+        });
+      } else {
+        await rootGaugeFactory.transmit_emissions(gaugeAddress);
+      }
       successfulGaugeAddresses.push(gaugeAddress);
     } catch (error) {
       console.warn(`Failed to transmit emissions for gauge ${gaugeAddress}`);
