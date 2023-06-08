@@ -129,8 +129,16 @@ export async function ethersScript(provider: BaseProvider, signer: Signer) {
     }
   }
 
+  console.log("New veSDL lockers that should be pushed to RootOracle:");
+  console.log(wallets);
+
+  if (walletsWithBalance === undefined || walletsWithBalance.size === 0) {
+    console.log("No new veSDL lockers to push to RootOracle. Exiting...");
+    return;
+  }
+
+  console.log("Pushing new veSDL lockers to RootOracle...");
   // Call aggregate3 method from Multicall3 contract with the above created calls array
   await multicall3.aggregate3(calls);
   console.log("Successfully pushed new veSDL lockers to RootOracle");
-  console.log(wallets);
 }
