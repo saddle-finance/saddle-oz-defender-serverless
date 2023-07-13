@@ -144,9 +144,14 @@ export async function ethersScript(provider: BaseProvider, signer: Signer) {
     }
     try {
       if (optRootGaugeAddresses.includes(gaugeAddress)) {
-        await rootGaugeFactory.transmit_emissions(gaugeAddress, {
-          gasLimit: 700_000,
-        });
+        // Check if the tx will fail via estimateGas
+        // This is because the tx will fail if there are no emissions to transmit
+        // and we don't want to waste gas
+        if (await rootGaugeFactory.estimateGas.transmit_emissions(gaugeAddress)) {
+          await rootGaugeFactory.transmit_emissions(gaugeAddress, {
+            gasLimit: 550_000,
+          });
+        }
       } else {
         await rootGaugeFactory.transmit_emissions(gaugeAddress);
       }
